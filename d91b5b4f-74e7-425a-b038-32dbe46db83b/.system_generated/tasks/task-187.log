@@ -1,0 +1,7 @@
+Successfully scheduled one-shot timer.
+Expected to fire at: 2026-06-02T20:20:01+05:30
+Prompt: Wait for notebook cell execution to complete
+
+[2026-06-02T20:19:26+05:30] Still waiting. Remaining time: 35s
+[2026-06-02T20:19:36+05:30] Still waiting. Remaining time: 25s
+[2026-06-02T20:19:42+05:30] Timer cancelled: agent received a message during wait.

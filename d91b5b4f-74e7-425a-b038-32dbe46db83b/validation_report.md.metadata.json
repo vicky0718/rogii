@@ -1,0 +1,5 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_OTHER",
+  "summary":  "Comprehensive validation report verifying Claude's geosteering competition claims, including data leakage verification, causal trajectory leakage checks, geosteering physical inversion mechanics, and a comparison of the tabular vs. sequence alignment modeling paradigms.",
+  "updatedAt":  "2026-06-02T11:04:00.039266200Z"
+}

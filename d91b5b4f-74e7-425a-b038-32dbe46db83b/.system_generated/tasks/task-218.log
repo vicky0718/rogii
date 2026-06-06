@@ -1,0 +1,19 @@
+C:\Users\vignesh.nehru\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\gaussian_process\kernels.py:450: ConvergenceWarning: The optimal value found for dimension 0 of parameter length_scale is close to the specified upper bound 5000.0. Increasing the bound and calling fit again may find a better value.
+  warnings.warn(
+Well path length: 5278 rows
+PS index: 1441
+
+Comparing predictions in the prediction zone:
+           MD  True_TVT       IDW_TVT        GP_TVT    IDW_Zform     GP_Zform
+1441  12908.0  11747.37  11747.370000  11747.370000  2012.290000  2012.290000
+1941  13408.0  11748.26  11748.446460  11738.648268  2026.906460  2017.108268
+2441  13908.0  11744.71  11752.117809  11732.696449  2041.217809  2021.796449
+2941  14408.0  11742.22  11751.557862  11721.776309  2055.767862  2025.986309
+3441  14908.0  11744.13  11753.310762  11712.368784  2070.440762  2029.498784
+3941  15408.0  11737.48  11746.152612  11693.756481  2084.902612  2032.506481
+4441  15908.0  11735.70  11749.126251  11684.790089  2099.246251  2034.910089
+4941  16408.0  11735.54  11753.943959  11676.577668  2113.823959  2036.457668
+
+Prediction Zone Prior RMSE:
+  IDW RMSE: 10.8367 ft
+  Kriging (GP) RMSE: 36.9288 ft

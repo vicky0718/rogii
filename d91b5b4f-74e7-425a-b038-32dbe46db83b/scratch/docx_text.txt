@@ -1,0 +1,561 @@
+Wellbore Geology Competition Understanding And Problem Decomposition
+ROGII – Wellbore Geology Prediction
+Comprehensive interpretation of the provided competition description, slides, diagrams, and problem mechanics.
+1. Core Problem Definition
+The competition objective is:
+Predict the geological position of a horizontal wellbore after a certain point called the Prediction Start (PS).
+The target variable is:
+TVT = True Vertical Thickness / geological vertical positioning metric.
+The prediction is evaluated using:
+RMSE between predicted TVT and manually interpreted TVT.
+Current leaderboard benchmark mentioned:
+RMSE ≈ 8.966
+Lower RMSE is better.
+2. Mathematical Objective
+Evaluation metric:
+RMSE = sqrt( (1/n) * Σ(yi - yhat_i)^2 )
+Implications:
+Large prediction errors are penalized quadratically.
+A few badly predicted regions can significantly worsen leaderboard score.
+Continuity and stability matter.
+Geological discontinuities or sudden wrong directional shifts are dangerous.
+Local alignment quality matters more than just average trend.
+This means:
+Small systematic drift over long intervals is harmful.
+Abrupt geological misalignment is extremely harmful.
+Sequence consistency matters.
+3. Fundamental Geological Interpretation
+This is NOT a generic tabular regression problem.
+The problem is fundamentally:
+geological sequence matching
+subsurface trajectory interpretation
+depth correlation
+signal alignment
+stratigraphic tracking
+sequential trajectory inference
+The model must infer where the horizontal well sits inside geological layers.
+The geology itself is not directly observed.
+Instead, we infer geological position indirectly using:
+Gamma Ray signatures
+spatial trajectory
+neighboring geological structures
+typewell correlation
+already-known TVT before PS
+4. Important Data Entities
+Each horizontal well has:
+Horizontal well CSV
+Assigned typewell CSV
+PNG visualization
+The typewell acts as a geological reference profile.
+5. Horizontal Well Data Interpretation
+Columns described:
+MD
+Measured Depth.
+Distance traveled along the wellbore.
+Not true vertical depth.
+Increases monotonically.
+Represents trajectory length.
+This is essentially the sequence axis.
+X, Y, Z
+Spatial coordinates.
+These define:
+well geometry
+azimuth
+direction
+lateral orientation
+local spatial geology context
+Important implications:
+Geological dip relative to drilling direction matters.
+Wells drilled perpendicular to dip behave differently from wells drilled parallel to dip.
+Neighboring wells likely contain correlated geological movement.
+GR (Gamma Ray)
+One of the most important signals.
+GR measures natural radioactivity.
+Geological interpretation:
+Different rock types produce different GR signatures.
+Shales generally show higher GR.
+Cleaner formations show lower GR.
+Changes in GR correspond to lithological transitions.
+The slides repeatedly emphasize:
+TVT must be inferred from GR behavior.
+Meaning:
+GR is effectively the observable signal. TVT is latent geological positioning.
+TVT
+Target variable.
+Represents geological vertical position.
+Training set:
+fully available
+Test set:
+hidden after Prediction Start (PS)
+Very important:
+TVT is NOT random.
+It behaves:
+continuously
+smoothly
+geologically constrained
+sequence dependent
+TVT can:
+increase
+decrease
+remain flat
+depending on geological movement.
+TVT_input
+One of the most critical columns.
+The slides imply:
+TVT_input contains known TVT values until the Prediction Start (PS) point.
+After PS:
+values become NaN
+model must extrapolate/predict future TVT
+This converts the problem into:
+partial sequence completion
+conditional forecasting
+constrained continuation problem
+rather than standard supervised regression.
+Formation Tops
+Examples:
+ANCC
+ASTNU
+ASTNL
+EGFDU
+EGFDL
+BUDA
+Available only in training.
+These likely represent:
+predicted geological formation depths
+structural geological boundaries
+stratigraphic markers
+These can strongly help understand:
+geological transitions
+expected TVT movement
+dip trends
+structural positioning
+Potentially extremely predictive.
+6. Typewell Interpretation
+Each horizontal well has an associated vertical typewell.
+The typewell contains:
+TVT
+GR
+Geology labels
+This is crucial.
+The typewell is effectively:
+A reference geological fingerprint.
+The horizontal well must be aligned against this reference.
+7. The Core Hidden Mechanism of the Competition
+The competition is fundamentally about:
+Signal correlation between:
+Horizontal GR
+Typewell GR
+The slides explicitly show:
+"GR signature matches Typewell GR"
+This implies:
+TVT prediction is essentially:
+Finding where the horizontal GR belongs inside the typewell geological profile.
+This resembles:
+sequence alignment
+template matching
+dynamic time warping
+time series registration
+trajectory correlation
+more than ordinary ML.
+8. Important Geological Behaviors from Slides
+The slides explicitly show multiple behaviors.
+Case 1: TVT Increasing
+The horizontal well moves deeper into the formation.
+Implications:
+geological correlation shifts downward in typewell TVT scale
+GR patterns move toward deeper layers
+Case 2: TVT Decreasing
+The well moves upward geologically.
+Implications:
+correlation shifts upward in typewell TVT scale
+opposite directional mapping
+Case 3: TVT Constant
+Geological position remains stable.
+Implications:
+GR signature remains relatively stationary
+geology remains within same layer
+9. Extremely Important Insight from Slides
+The slides explicitly state:
+"Gamma ray in the horizontal well has better resolution"
+and later:
+"The green GR correlates better with the red GR than with the typewell GR (black)"
+This is a major insight.
+Meaning:
+The horizontal well GR before PS may be more useful than the typewell itself.
+This suggests:
+The optimal prediction strategy may involve:
+using pre-PS horizontal GR as local geological template
+extending deeper TVT trajectories
+locally matching future GR behavior
+instead of relying purely on typewell alignment.
+This is likely one of the strongest clues in the slides.
+10. Important Sequential Nature
+The problem is highly sequential.
+Future TVT depends on:
+previous TVT
+previous GR
+local continuity
+geological trend
+spatial direction
+This means:
+Independent row prediction is likely suboptimal.
+The system has:
+temporal continuity
+geological continuity
+structural continuity
+This strongly favors:
+autoregressive models
+sequence models
+state-space modeling
+recurrent architectures
+transformer approaches
+dynamic programming alignment
+11. Spatial Geology Interpretation
+The slides include:
+map views
+3D views
+geological dip examples
+This implies spatial structure matters heavily.
+Flat Geology
+TVT changes minimally.
+Prediction easier.
+Dipping Geology
+TVT changes systematically.
+The slides specifically mention:
+"The azimuth of horizontal drilling affects the expected geology dip"
+This is critical.
+Meaning:
+The same geological structure produces different TVT trajectories depending on drilling direction.
+Hence:
+Azimuth engineering may become highly valuable.
+Possible engineered features:
+well heading angle
+local direction vectors
+dx/dmd
+dy/dmd
+dz/dmd
+trajectory curvature
+12. Offset Well Information
+The slides explicitly state:
+"The geology of an offset well can help predict the geology of the current well"
+and:
+"Geological dips behave similarly in neighboring wells"
+This is one of the most important competition clues.
+Implications:
+This competition likely benefits enormously from:
+cross-well learning
+neighbor-based modeling
+spatial interpolation
+local geological trend estimation
+This means:
+A well should not necessarily be modeled independently.
+Potential advanced strategy:
+cluster nearby wells
+estimate regional dip fields
+use neighboring TVT trajectories
+construct geological neighborhood embeddings
+13. Prediction Start (PS) Interpretation
+PS divides:
+Known region:
+TVT available
+GR available
+Unknown region:
+TVT hidden
+GR available
+This means:
+The model has access to:
+future GR
+future XYZ
+but not future TVT.
+Therefore the problem becomes:
+Infer geological positioning from future GR continuation.
+This is highly important.
+The model is NOT forecasting blindly.
+It still sees:
+future signal measurements
+future trajectory geometry
+Thus:
+This is more like conditional geological alignment than future extrapolation.
+14. Critical Understanding of GR-to-TVT Mapping
+The slides repeatedly imply:
+TVT is encoded indirectly through GR patterns.
+Therefore:
+The underlying function is approximately:
+TVT = f(GR pattern, spatial position, geological context)
+But importantly:
+The relationship is NOT pointwise.
+A single GR value cannot uniquely determine TVT.
+Instead:
+Local GR sequences determine geological context.
+Hence:
+Sequence windows are likely essential.
+15. Consequence for Feature Engineering
+Simple row-wise features may underperform.
+Likely valuable features:
+lag GR
+rolling GR windows
+local gradients
+GR frequency signatures
+GR wave patterns
+local autocorrelation
+trajectory curvature
+depth progression
+dip estimation
+Potentially very valuable:
+sequence embeddings
+similarity scores against typewell
+DTW alignment distances
+nearest geological signature matching
+16. Important Modeling Implications
+The competition naturally supports multiple modeling paradigms.
+Classical ML
+Possible:
+LightGBM
+CatBoost
+XGBoost
+Strengths:
+fast
+strong baselines
+interpretable
+Weakness:
+limited sequence understanding
+Sequential Deep Learning
+Highly compatible.
+Examples:
+LSTM
+GRU
+Temporal CNN
+Transformer
+TCN
+Reason:
+TVT behaves as continuous geological sequence.
+Signal Alignment Methods
+Potentially extremely powerful.
+Examples:
+Dynamic Time Warping
+cross-correlation
+sequence registration
+template matching
+nearest subsequence matching
+Because the problem fundamentally resembles:
+matching geological signatures.
+17. Important Data Quality Notes
+Slides mention:
+"some GR values may be NaN"
+Implications:
+Need robust handling of:
+missing GR
+noisy intervals
+irregular geological transitions
+Potential strategies:
+interpolation
+smoot
+I’ve completed a deep decomposition of the competition mechanics, geological interpretation, sequence behavior, GR↔TVT relationships, spatial implications, and modeling consequences based on:
+the PPT slides 
+diagrams 
+captions 
+geological hints 
+evaluation metric 
+your dataset description 
+the RMSE formulation image 
+The analysis includes:
+exact interpretation of each data field 
+hidden implications from the slides 
+geological reasoning 
+what the competition is actually asking the model to learn 
+why this is not a normal regression problem 
+sequence/alignment insights 
+spatial geology interpretation 
+implications for validation and modeling 
+the strongest clues hidden in the PPT 
+The extracted understanding is organized in a structured document for future reference and iterative refinement.
+EDA
+For this competition, your first objective is to build a well-level unified dataset from the paired files:
+horizontal_well.csv 
+typewell.csv 
+optionally .png 
+The key challenge is:
+each well is a timeseries / sequential geology problem 
+TVT is partially known 
+you must predict missing TVT values in the evaluation region 
+A proper EDA pipeline matters more here than immediately jumping into deep learning.
+1. Recommended Folder Structure
+Assume:
+DATA_PATH = "/kaggle/input/rogii-wellbore-geology-prediction"
+Then:
+import osTRAIN_DIR = os.path.join(DATA_PATH, "train")TEST_DIR = os.path.join(DATA_PATH, "test")
+2. Import Required Libraries
+import osimport globimport pandas as pdimport numpy as npimport matplotlib.pyplot as pltimport seaborn as snsfrom tqdm import tqdm
+3. Discover All Wells
+Each well has:
+015fe0d2__horizontal_well.csv015fe0d2__typewell.csv015fe0d2.png
+We first extract unique well IDs.
+horizontal_files = glob.glob(f"{TRAIN_DIR}/*__horizontal_well.csv")well_ids = [    os.path.basename(f).split("__")[0]    for f in horizontal_files]print("Total wells:", len(well_ids))print(well_ids[:5])
+4. Load One Well
+Start with one well to understand structure.
+well_id = well_ids[0]horizontal_path = f"{TRAIN_DIR}/{well_id}__horizontal_well.csv"typewell_path = f"{TRAIN_DIR}/{well_id}__typewell.csv"horizontal_df = pd.read_csv(horizontal_path)typewell_df = pd.read_csv(typewell_path)
+5. Initial Inspection
+Horizontal Well
+print(horizontal_df.shape)horizontal_df.head()
+Expected columns:
+MDXYZANCCASTNUASTNLEGFDUEGFDLBUDATVTGRTVT_input
+Typewell
+print(typewell_df.shape)typewell_df.head()
+Expected:
+TVTGRGeology
+6. Core EDA Checks
+Missing Values
+Very important because:
+train contains partial labels 
+test hides TVT 
+horizontal_df.isnull().sum()
+Especially inspect:
+horizontal_df["TVT"].isnull().mean()horizontal_df["TVT_input"].isnull().mean()
+Statistical Summary
+horizontal_df.describe()
+Check:
+depth ranges 
+GR distributions 
+coordinate ranges 
+TVT variance 
+7. Visualize Trajectory
+This is extremely important for geology understanding.
+X-Y Well Path
+plt.figure(figsize=(8,6))plt.plot(horizontal_df["X"], horizontal_df["Y"])plt.xlabel("X")plt.ylabel("Y")plt.title(f"Well Path - {well_id}")plt.show()
+MD vs TVT
+plt.figure(figsize=(14,5))plt.plot(horizontal_df["MD"], horizontal_df["TVT"])plt.xlabel("Measured Depth")plt.ylabel("TVT")plt.title("TVT along wellbore")plt.show()
+You’ll usually notice:
+smooth geological transitions 
+local shifts 
+sequential continuity 
+This strongly suggests:
+sequence models 
+interpolation-aware models 
+state-space models 
+transformers/LSTMs/TCNs 
+8. Gamma Ray Analysis
+Gamma Ray is one of the most important features.
+Horizontal Well GR
+plt.figure(figsize=(14,4))plt.plot(horizontal_df["MD"], horizontal_df["GR"])plt.title("Horizontal Well Gamma Ray")plt.xlabel("MD")plt.ylabel("GR")plt.show()
+Typewell GR
+plt.figure(figsize=(6,10))plt.plot(typewell_df["GR"], typewell_df["TVT"])plt.gca().invert_yaxis()plt.title("Typewell GR")plt.xlabel("GR")plt.ylabel("TVT")plt.show()
+This helps identify:
+lithology transitions 
+correlations between wells 
+geological matching patterns 
+9. Geology Distribution
+typewell_df["Geology"].value_counts()
+Visualization:
+sns.countplot(    y=typewell_df["Geology"],    order=typewell_df["Geology"].value_counts().index)plt.title("Geology Distribution")plt.show()
+10. Correlation Matrix
+plt.figure(figsize=(10,8))sns.heatmap(    horizontal_df.corr(numeric_only=True),    cmap="coolwarm",    annot=False)plt.title("Feature Correlation")plt.show()
+Important relationships:
+GR ↔ TVT 
+Z ↔ TVT 
+Formation tops ↔ TVT 
+11. Understand the Evaluation Zone
+This is CRITICAL.
+The rows where:
+TVT_input is NaN
+are likely your prediction region.
+eval_zone = horizontal_df[    horizontal_df["TVT_input"].isna()]train_zone = horizontal_df[    horizontal_df["TVT_input"].notna()]
+Visualize:
+plt.figure(figsize=(14,5))plt.plot(horizontal_df["MD"], horizontal_df["TVT"], label="True TVT")plt.axvspan(    eval_zone["MD"].min(),    eval_zone["MD"].max(),    color='red',    alpha=0.2,    label="Evaluation Zone")plt.legend()plt.show()
+This helps understand:
+forecasting length 
+continuity 
+distribution shift 
+12. Create Master Dataset
+You should eventually combine all wells.
+Horizontal Wells
+all_horizontal = []for well_id in tqdm(well_ids):    path = f"{TRAIN_DIR}/{well_id}__horizontal_well.csv"    df = pd.read_csv(path)    df["well_id"] = well_id    all_horizontal.append(df)horizontal_master = pd.concat(all_horizontal, ignore_index=True)
+Typewells
+all_typewells = []for well_id in tqdm(well_ids):    path = f"{TRAIN_DIR}/{well_id}__typewell.csv"    df = pd.read_csv(path)    df["well_id"] = well_id    all_typewells.append(df)typewell_master = pd.concat(all_typewells, ignore_index=True)
+13. Dataset-Level EDA
+Overall Missingness
+horizontal_master.isnull().mean().sort_values(ascending=False)
+TVT Distribution
+plt.figure(figsize=(8,5))sns.histplot(horizontal_master["TVT"], bins=100)plt.title("TVT Distribution")plt.show()
+GR vs TVT
+sample_df = horizontal_master.sample(50000)plt.figure(figsize=(8,6))sns.scatterplot(    data=sample_df,    x="GR",    y="TVT",    alpha=0.3)plt.title("GR vs TVT")plt.show()
+14. Most Important Insight
+This problem is NOT a normal tabular regression problem.
+It is primarily:
+sequential 
+geological correlation 
+depth-series prediction 
+signal matching 
+You should think in terms of:
+Approach
+Suitability
+XGBoost
+Good baseline
+LightGBM
+Good baseline
+CatBoost
+Good baseline
+LSTM
+Very strong
+1D CNN
+Strong
+Transformer
+Potentially best
+Dynamic Time Warping
+Very relevant
+Sequence-to-sequence
+Highly relevant
+15. Strong Baseline Strategy
+Start with:
+Feature Engineering
+Create:
+df["delta_gr"] = df["GR"].diff()df["delta_z"] = df["Z"].diff()df["rolling_gr_mean"] = df["GR"].rolling(10).mean()df["rolling_gr_std"] = df["GR"].rolling(10).std()
+Also:
+df["relative_md"] = df["MD"] - df["MD"].min()
+16. Initial ML Baseline
+Start with:
+LightGBM 
+CatBoost 
+XGBoost 
+using:
+MDXYZGRformation topsrolling statisticslag features
+Target:
+TVT
+17. Key Advanced Insight
+The typewell is essentially a reference geological signature.
+You can engineer:
+similarity metrics 
+GR alignment 
+nearest geological intervals 
+DTW features 
+This can dramatically improve performance.
+18. Suggested Competition Roadmap
+Phase 1
+EDA 
+understand missingness 
+build unified dataset 
+Phase 2
+LightGBM baseline 
+Phase 3
+sequence features 
+rolling windows 
+lag engineering 
+Phase 4
+deep learning 
+1D CNN / Transformer 
+Phase 5
+ensemble 
+19. Very Important Practical Note
+Do NOT load all PNGs initially.
+Ignore them for baseline modeling.
+Use them later for:
+debugging 
+visual interpretation 
+possibly CNN feature extraction 
+The CSVs are the primary signal source.
+20. Recommended First Notebook Structure
+1. Imports2. File discovery3. Single well EDA4. Global EDA5. Missing analysis6. Visualization7. Feature engineering8. Baseline model9. Validation strategy10. Submission generation
+For this competition, the biggest differentiator will likely be:
+proper sequential validation 
+leakage prevention 
+typewell correlation engineering 
+handling long-range continuity in TVT prediction.

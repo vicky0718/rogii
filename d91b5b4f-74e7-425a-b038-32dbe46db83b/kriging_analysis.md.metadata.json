@@ -1,0 +1,5 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_OTHER",
+  "summary":  "Deep-dive debugging report explaining why the Matern Kriging implementation caused the Stage 1 RMSE to spike to 39.1 ft and why the Kaggle execution time ballooned to 170.58 minutes. Includes recommendations to resolve both issues.",
+  "updatedAt":  "2026-06-03T12:07:46.086041600Z"
+}

@@ -1,0 +1,4 @@
+C:\Users\vignesh.nehru\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\gaussian_process\kernels.py:450: ConvergenceWarning: The optimal value found for dimension 0 of parameter length_scale is close to the specified upper bound 5000.0. Increasing the bound and calling fit again may find a better value.
+  warnings.warn(
+Universal Kriging Prior RMSE: 13.7240 ft
+IDW Prior RMSE: 10.8367 ft

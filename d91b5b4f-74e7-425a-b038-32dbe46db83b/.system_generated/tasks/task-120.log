@@ -1,0 +1,7 @@
+Running rapid Kriging-mapping notebook validation cycle...
+[KRIGING] Extracting 3D geological boundary points from training wells...
+Traceback (most recent call last):
+  File "C:\Users\vignesh.nehru\.gemini\antigravity\scratch\verify_kriging_code.py", line 227, in <module>
+    ps = find_ps_train(hw)
+         ^^^^^^^^^^^^^
+NameError: name 'find_ps_train' is not defined

@@ -1,0 +1,5 @@
+Successfully scheduled one-shot timer.
+Expected to fire at: 2026-06-03T17:37:18+05:30
+Prompt: Wait for compare priors script to complete
+
+[2026-06-03T17:36:51+05:30] Timer cancelled: agent received a message during wait.

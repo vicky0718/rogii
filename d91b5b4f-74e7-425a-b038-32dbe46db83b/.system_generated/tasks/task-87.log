@@ -1,0 +1,19 @@
+Evaluating 40 wells subset for OOF CV comparison...
+
+--- Running CV for Version V5 ---
+Feature count: 45
+Stage 1 (Dipping Plane) RMSE: 14.5675 ft
+Stage 2 (LGB Residual) RMSE:  14.2045 ft
+Stage 3 (LGB + Smoothed) RMSE: 14.1988 ft
+
+--- Running CV for Version V7 ---
+Feature count: 52
+Stage 1 (Dipping Plane) RMSE: 14.5675 ft
+Stage 2 (LGB Residual) RMSE:  14.5449 ft
+Stage 3 (LGB + Smoothed) RMSE: 14.5414 ft
+
+=== FINAL COMPARISON SUMMARY ===
+V5 Stage 3 (Smoothed) RMSE: 14.1988 ft
+V7 Stage 3 (Smoothed) RMSE: 14.5414 ft
+RMSE Difference (V5 - V7): -0.3426 ft
+V5 IS BETTER THAN V7!

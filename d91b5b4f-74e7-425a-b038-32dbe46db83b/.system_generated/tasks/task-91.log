@@ -1,0 +1,7 @@
+Successfully scheduled one-shot timer.
+Expected to fire at: 2026-06-02T18:04:23+05:30
+Prompt: Wait for performance script to complete
+
+[2026-06-02T18:03:48+05:30] Still waiting. Remaining time: 35s
+[2026-06-02T18:03:58+05:30] Still waiting. Remaining time: 25s
+[2026-06-02T18:04:08+05:30] Timer cancelled: agent received a message during wait.
